@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Practice2.Model;
 
 namespace Practice2.Pages
 {
@@ -20,7 +21,7 @@ namespace Practice2.Pages
     /// </summary>
     public partial class Client : Page
     {
-        public Client()
+        public Client(Employee_registration user)
         {
             InitializeComponent();
         }

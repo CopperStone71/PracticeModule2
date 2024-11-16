@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Practice2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Icon="/Resources/bMrAXjsoZ3o.ico">
+        Title="Руль" Height="710" Width="1000"  MinHeight = "710" MinWidth ="1000" WindowStartupLocation = "CenterScreen"
+         Icon="/Resources/bMrAXjsoZ3o.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -13,8 +14,8 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Background="#FF76E383">
-            <Image Width="45" Height="45" HorizontalAlignment="Left" Margin="5" Source="/Resources/bMrAXjsoZ3o.jpg"/>
-            <Button x:Name="btnBack" HorizontalAlignment="Right" Content="Назад" Click="btnBack_Click"/>
+            <Button x:Name="btnBack" Content="Назад" HorizontalAlignment="Right" Cursor="Hand" Click="btnBack_Click"/>
+            <Image Margin="10,7,0,7" Width="45" HorizontalAlignment="Left" Source="/Resources/bMrAXjsoZ3o.jpg"/>
         </Grid>
         <Frame x:Name="FrmMain" Grid.Row="1" NavigationUIVisibility="Hidden" ContentRendered="FrmMain_ContentRendered"/>
     </Grid>
