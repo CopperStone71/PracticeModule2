@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Practice2.Pages
 {
@@ -23,10 +24,14 @@ namespace Practice2.Pages
     public partial class Autho : Page
     {
         int click;
+        int lockTime;
+        DispatcherTimer lockTimer;
         public Autho()
         {
             InitializeComponent();
             click = 0;
+            lockTimer = new DispatcherTimer();
+            lockTimer.Interval = TimeSpan.FromSeconds(1);
         }
 
         private void btnEnterGuests_Click(object sender, RoutedEventArgs e)
@@ -46,7 +51,9 @@ namespace Practice2.Pages
 
         private void btnEnter_Click(object sender, RoutedEventArgs e)
         {
-            click += 2;
+            // login = Trax17
+            // password = Yuzu
+            click += 1;
             string login = txtLogin.Text.Trim();
             string password = tbPassword.Text.Trim();
             string hashPassw = Hash.HashHelper.HashPassword(password);
@@ -57,11 +64,19 @@ namespace Practice2.Pages
             if (click == 1)
             {
                 if (user != null)
-                {
-                    MessageBox.Show("Вы вошли под: " + user.Login.ToString());
-                    LoadPage(user);
+                {        
+                    if (IsWithinWorkingHours() == true)
+                    {
+                        MessageBox.Show("Вы вошли под: " + user.Login.ToString());
+                        LoadPage(user);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Попытка входа в не рабочее время");
+                        Application.Current.Shutdown();
+                    }
                 }
-                else
+                else 
                 {
                     MessageBox.Show("Вы ввели логин или пароль неверно!");
                     GenerateCapctcha();
@@ -72,7 +87,7 @@ namespace Practice2.Pages
                     txtBlockCaptcha.Text = CaptchaGenerator.GenerateCaptchaText(6);
                 }
             }
-            else if (click > 1)
+            else if (click > 1 && click < 3)
             {
                 if (user != null && txtboxCaptcha.Text == txtBlockCaptcha.Text)
                 {
@@ -82,8 +97,19 @@ namespace Practice2.Pages
                     txtboxCaptcha.Text = "";
                     txtboxCaptcha.Visibility = Visibility.Hidden;
                     txtBlockCaptcha.Visibility = Visibility.Hidden;
-                    MessageBox.Show("Вы вошли под: " + user.Login.ToString());
-                    LoadPage(user);
+                    if (user != null)
+                    {
+                        if (IsWithinWorkingHours() == true)
+                        {
+                            MessageBox.Show("Вы вошли под: " + user.Login.ToString());
+                            LoadPage(user);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Попытка входа в не рабочее время");
+                            Application.Current.Shutdown();
+                        }
+                    }
                 }
                 else
                 {
@@ -93,12 +119,79 @@ namespace Practice2.Pages
                     MessageBox.Show("Пройдите капчу заново!");
                 }
             }
+            else if (click >= 3)
+            {
+                if (user != null && txtboxCaptcha.Text == txtBlockCaptcha.Text)
+                {
+                    txtLogin.Clear();
+                    tbPassword.Clear();
+                    txtBlockCaptcha.Text = "Text";
+                    txtboxCaptcha.Text = "";
+                    txtboxCaptcha.Visibility = Visibility.Hidden;
+                    txtBlockCaptcha.Visibility = Visibility.Hidden;
+                    if (user != null)
+                    {
+                        if (IsWithinWorkingHours() == true)
+                        {
+                            MessageBox.Show("Вы вошли под: " + user.Login.ToString());
+                            LoadPage(user);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Попытка входа в не рабочее время");
+                            Application.Current.Shutdown();
+                        }
+                    }
+                }
+                else
+                {
+                    btnEnter.IsEnabled = false;
+                    btnEnterGuests.IsEnabled = false;
+                    txtLogin.IsEnabled = false;
+                    tbPassword.IsEnabled = false;
+                    txtboxCaptcha.IsEnabled = false;
+                    txtboxCaptcha.Text = "";
+
+                    lockTime = 10;
+                    txtBlockTimer.Text = $"Повторите через {lockTime} секунд";
+                    txtBlockTimer.Visibility = Visibility.Visible;
+
+                    lockTimer.Tick += LockTimer_Tick;
+                    lockTimer.Start();
+                }
+            }
         }
 
-        private void LoadPage( Employee_registration user)
+        private void LockTimer_Tick(object sender, EventArgs e)
+        {
+            lockTime--;
+            txtBlockTimer.Text = $"Повторите через {lockTime} секунд";
+
+            if (lockTime <= 0)
+            {
+                lockTimer.Stop();
+                btnEnter.IsEnabled = true;
+                btnEnterGuests.IsEnabled = true;
+                txtLogin.IsEnabled = true;
+                tbPassword.IsEnabled = true;
+                txtboxCaptcha.IsEnabled = true;
+
+                txtBlockTimer.Visibility = Visibility.Hidden;
+                click = 0;
+                lockTimer.Tick -= LockTimer_Tick;
+            }
+        }
+            private void LoadPage(Employee_registration user)
         {
             click = 0;
-            NavigationService.Navigate(new Client(user));
+            var clientPage = new Client(user);
+            NavigationService.Navigate(clientPage);
+        }
+
+        private bool IsWithinWorkingHours()
+        {
+            int currentHour = DateTime.Now.Hour;
+            return currentHour >= 10 && currentHour < 19;
         }
     }
 }

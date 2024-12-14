@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Client">
 
-    <Grid>
-        
+    <Grid x:Name="GridC" >
+        <TextBlock Visibility="Visible" x:Name="txtblc_Welcome" HorizontalAlignment="Center" Margin="0,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Bahnschrift Light Condensed" Text="BaaB"/>
     </Grid>
 </Page>
