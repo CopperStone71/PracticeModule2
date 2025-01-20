@@ -12,11 +12,7 @@ namespace Practice2.Services
         private static prog_comEntities _context;
         public static prog_comEntities GetContext()
         {
-            if (_context == null)
-            {
-                _context = new prog_comEntities();
-            }
-            return _context;
+            return new prog_comEntities();
         }
     }
 }

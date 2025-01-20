@@ -8,7 +8,49 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Client">
 
-    <Grid x:Name="GridC" >
-        <TextBlock Visibility="Visible" x:Name="txtblc_Welcome" HorizontalAlignment="Center" Margin="0,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Bahnschrift Light Condensed" Text="BaaB"/>
+    <Grid>
+        
+        <Label Content="Client" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF00C013" FontSize="14"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Right">
+            <TextBlock Text="Пользователь"/>
+            <TextBlock x:Name="txtFullName"/>
+        </StackPanel>
+
+
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Фильтр по должности" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox Name="cbJobTitle" Width="200" Margin="10" SelectionChanged="cbJobTitle_SelectionChanged" Height="35" SelectedIndex="0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Поиск по ФИО" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBox Name="tbSearch" Width="200" Margin="10"  TextChanged="tbSearch_TextChanged" Height="30" FontSize="12"/>
+            </StackPanel>
+            <ListView Name="EmployeesListView" Grid.Column="0" VerticalAlignment="Center" Margin="5, 0, 5, 0" MouseDoubleClick="EmployeesListView_MouseDoubleClick" d:ItemsSource="{d:SampleData ItemCount=1}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="10" Padding="10" BorderThickness="1" CornerRadius="5" BorderBrush="Gray">
+                            <StackPanel x:Name="spEmployeeCard" Width="150">
+                                <Image Source="{Binding PhotoUrl}" Width="100" Height="100" Stretch="UniformToFill" Margin="0, 0, 0, 10"/>
+                                <TextBlock Text="{Binding FullName}" HorizontalAlignment="Center" FontWeight="Bold" Margin="0, 0, 0, 5"/>
+                                <TextBlock Text="{Binding Employee_type_code}" HorizontalAlignment="Center" Margin="0, 0, 0, 5"/>
+                                <TextBlock Text="{Binding Mobile_number}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Margin="5,15,5,15" Content="Добавить сотрудника" Click="AddEmployeeButton_Click" Width="160"/>
+        </StackPanel>
     </Grid>
 </Page>

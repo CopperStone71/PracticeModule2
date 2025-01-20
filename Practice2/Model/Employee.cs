@@ -22,12 +22,13 @@ namespace Practice2.Model
         }
     
         public int Employee_code { get; set; }
-        public Nullable<int> Employee_type_code { get; set; }
+        public string Employee_type_code { get; set; }
         public Nullable<int> Employee_registration_code { get; set; }
         public string First_name { get; set; }
         public string Second_name { get; set; }
         public string Patronymic { get; set; }
-        public Nullable<decimal> Mobile_number { get; set; }
+        public string Mobile_number { get; set; }
+        public string PositionAtWork { get; set; }
     
         public virtual Employee_registration Employee_registration { get; set; }
         public virtual Employee_type Employee_type { get; set; }

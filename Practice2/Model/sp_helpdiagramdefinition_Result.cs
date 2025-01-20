@@ -10,20 +10,10 @@
 namespace Practice2.Model
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Employee_type
+    public partial class sp_helpdiagramdefinition_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Employee_type()
-        {
-            this.Employee = new HashSet<Employee>();
-        }
-    
-        public string Employee_type_code { get; set; }
-        public string Type { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Employee> Employee { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }

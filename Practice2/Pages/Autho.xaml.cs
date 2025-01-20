@@ -74,6 +74,8 @@ namespace Practice2.Pages
                     {
                         MessageBox.Show("Попытка входа в не рабочее время");
                         Application.Current.Shutdown();
+                        //MessageBox.Show("Вы вошли под: " + user.Login.ToString());
+                        //LoadPage(user);
                     }
                 }
                 else 
