@@ -72,10 +72,10 @@ namespace Practice2.Pages
                     }
                     else
                     {
-                        MessageBox.Show("Попытка входа в не рабочее время");
-                        Application.Current.Shutdown();
-                        //MessageBox.Show("Вы вошли под: " + user.Login.ToString());
-                        //LoadPage(user);
+                        //MessageBox.Show("Попытка входа в не рабочее время");
+                        //Application.Current.Shutdown();
+                        MessageBox.Show("Вы вошли под: " + user.Login.ToString());
+                        LoadPage(user);
                     }
                 }
                 else 
@@ -193,7 +193,7 @@ namespace Practice2.Pages
         private bool IsWithinWorkingHours()
         {
             int currentHour = DateTime.Now.Hour;
-            return currentHour >= 10 && currentHour < 19;
+            return currentHour >= 10 && currentHour < 20;
         }
     }
 }

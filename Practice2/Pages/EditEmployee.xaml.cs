@@ -2,6 +2,7 @@
 using Practice2.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace Practice2.Pages
 {
@@ -47,6 +49,43 @@ namespace Practice2.Pages
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            StringBuilder errorMessages = new StringBuilder();
+
+            /*if (string.IsNullOrWhiteSpace(tbFirstName.Text))
+            {
+                errorMessages.AppendLine("Поле \"Имя\" обязательно для заполнения.");
+            }
+            else if (tbFirstName.Text.Length < 3)
+            {
+                errorMessages.AppendLine("Имя должно содержать не менее 3 букв.");
+            }
+
+            if (string.IsNullOrWhiteSpace(tbLastName.Text))
+            {
+                errorMessages.AppendLine("Поле \"Фамилия\" обязательно для заполнения.");
+            }
+            else if (tbLastName.Text.Length < 3)
+            {
+                errorMessages.AppendLine("Фамилия должна содержать не менее 3 букв.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(tbMiddleName.Text) && tbMiddleName.Text.Length < 3)
+            {
+                errorMessages.AppendLine("Отчество должно содержать не менее 3 букв, если указано.");
+            }
+
+            if (errorMessages.Length > 0)
+            {
+                MessageBox.Show(errorMessages.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(tbFirstName.Text) || string.IsNullOrWhiteSpace(tbLastName.Text))
+            {
+                MessageBox.Show("Заполните обязательные поля", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }*/
+
             try
             {
                 using (var db = Helper.GetContext())
@@ -59,6 +98,29 @@ namespace Practice2.Pages
                         existingEmployee.Second_name = tbLastName.Text;
                         existingEmployee.Patronymic = tbMiddleName.Text;
                         existingEmployee.Mobile_number = tbPhoneNumber.Text;
+
+                        var validationContext = new ValidationContext(existingEmployee, null, null);
+                        var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+
+                        StringBuilder sb = new StringBuilder();
+                        if (!Validator.TryValidateObject(existingEmployee, validationContext, validationResults, true))
+                        {
+                            foreach (var error in validationResults)
+                            {
+                                sb.AppendLine(error.ErrorMessage);
+                            }
+                            MessageBox.Show(sb.ToString());
+                            return;
+                        }
+
+                        /*bool isValid = Validator.TryValidateObject(existingEmployee, validationContext, validationResults, true);
+                        if (!isValid)
+                        {
+                            string errorMessages = string.Join("\n", validationResults.Select(r => r.ErrorMessage));
+                            MessageBox.Show($"Ошибки валидации:\n{errorMessages}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }*/
+
                         db.SaveChanges();
                         MessageBox.Show("Данные успешно сохранены!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
