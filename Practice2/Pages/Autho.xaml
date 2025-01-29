@@ -11,24 +11,34 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-        
-        <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top">
             <TextBlock Text="Логин:"/>
             <TextBox x:Name="txtLogin"/>
             <TextBlock Text="Пароль:"/>
             <TextBox x:Name="tbPassword"/>
-            <TextBlock Visibility="Hidden" x:Name="txtBlockCaptcha" Text="Капча:"/>
-            <TextBox Visibility="Hidden" x:Name="txtboxCaptcha"/>
-            
+            <TextBlock  x:Name="txtBlockCaptcha" Text="Капча:" Visibility="Hidden"/>
+            <TextBox  x:Name="txtboxCaptcha" Visibility="Hidden"/>
+
             <TextBlock Visibility="Hidden" x:Name="txtBlockTimer" Text="" Foreground="Red"/>
-            <StackPanel Orientation="Horizontal" Height="80" HorizontalAlignment="Center">
-                <Button x:Name="btnEnterGuests" Margin="5,15,5,5" Content="Войти как гость" Click="btnEnterGuests_Click"/>
-                <Button x:Name="btnEnter" Margin="5,15,5,5" Content="Войти" Click="btnEnter_Click"/>
+            <StackPanel Orientation="Horizontal" Height="55" HorizontalAlignment="Center" >
+                <Button x:Name="btnEnterGuests" Content="Войти как гость" Click="btnEnterGuests_Click"/>
+                <Button x:Name="btnEnter" Content="Войти" Click="btnEnter_Click"/>
+                <Button x:Name="btnLostPassword" Content="Забыли пароль" Click="btnLostPassword_Click"/>
             </StackPanel>
+            <TextBlock  x:Name="tblEmail" Text="Введите почту:" Visibility="Hidden"/>
+            <TextBox  x:Name="tbEmail" Visibility="Hidden"/>
+            <StackPanel Orientation="Horizontal" Height="55" HorizontalAlignment="Center" >
+                <Button x:Name="btnSendCode" Content="Отправить код" Click="btnSendCode_Click" Visibility="Hidden"/>
+                <Button x:Name="btnCheckCode" Content="Проверить код" Click="btnCheckCode_Click" Visibility="Hidden"/>
+                <Button x:Name="btnChangePassword" Content="Сменить пароль" Click="btnChangePassword_Click" Visibility="Hidden"/>
+            </StackPanel>
+            <TextBlock  x:Name="tblNewPassword" Text="Новый пароль:" Visibility="Hidden"/>
+            <TextBox  x:Name="tbNewPassword" Visibility="Hidden"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -1,31 +1,26 @@
 ﻿using Practice2.Model;
 using Practice2.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Net.Mail;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace Practice2.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для Autho.xaml
-    /// </summary>
     public partial class Autho : Page
     {
         int click;
         int lockTime;
         DispatcherTimer lockTimer;
+        private string generatedCode;
+        private string userEmail;
+        private string userLogin;
+
         public Autho()
         {
             InitializeComponent();
@@ -34,25 +29,56 @@ namespace Practice2.Pages
             lockTimer.Interval = TimeSpan.FromSeconds(1);
         }
 
+        private void GenerateCaptcha()
+        {
+            txtboxCaptcha.Visibility = Visibility.Visible;
+            txtBlockCaptcha.Visibility = Visibility.Visible;
+
+            string captchaText = CaptchaGenerator.GenerateCaptchaText(6);
+            txtBlockCaptcha.Text = captchaText;
+            txtBlockCaptcha.TextDecorations = TextDecorations.Strikethrough;
+        }
+
+        private void LockTimer_Tick(object sender, EventArgs e)
+        {
+            lockTime--;
+            txtBlockTimer.Text = $"Повторите через {lockTime} секунд";
+
+            if (lockTime <= 0)
+            {
+                lockTimer.Stop();
+                btnEnter.IsEnabled = true;
+                btnEnterGuests.IsEnabled = true;
+                txtLogin.IsEnabled = true;
+                tbPassword.IsEnabled = true;
+                txtboxCaptcha.IsEnabled = true;
+
+                txtBlockTimer.Visibility = Visibility.Hidden;
+                click = 0;
+                lockTimer.Tick -= LockTimer_Tick;
+            }
+        }
+
+        private void LoadPage(Employee_registration user)
+        {
+            click = 0;
+            var clientPage = new Client(user);
+            NavigationService.Navigate(clientPage);
+        }
+
+        private bool IsWithinWorkingHours()
+        {
+            int currentHour = DateTime.Now.Hour;
+            return currentHour >= 10 && currentHour < 20;
+        }
+
         private void btnEnterGuests_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new Client(null));
         }
 
-        private void GenerateCapctcha()
-        {
-            txtboxCaptcha.Visibility = Visibility.Visible;
-            txtBlockCaptcha.Visibility = Visibility.Visible;
-
-            string capctchaText = CaptchaGenerator.GenerateCaptchaText(6);
-            txtBlockCaptcha.Text = capctchaText;
-            txtBlockCaptcha.TextDecorations = TextDecorations.Strikethrough;
-        }
-
         private void btnEnter_Click(object sender, RoutedEventArgs e)
         {
-            // login = Trax17
-            // password = Yuzu
             click += 1;
             string login = txtLogin.Text.Trim();
             string password = tbPassword.Text.Trim();
@@ -64,7 +90,7 @@ namespace Practice2.Pages
             if (click == 1)
             {
                 if (user != null)
-                {        
+                {
                     if (IsWithinWorkingHours() == true)
                     {
                         MessageBox.Show("Вы вошли под: " + user.Login.ToString());
@@ -72,16 +98,14 @@ namespace Practice2.Pages
                     }
                     else
                     {
-                        //MessageBox.Show("Попытка входа в не рабочее время");
-                        //Application.Current.Shutdown();
                         MessageBox.Show("Вы вошли под: " + user.Login.ToString());
                         LoadPage(user);
                     }
                 }
-                else 
+                else
                 {
                     MessageBox.Show("Вы ввели логин или пароль неверно!");
-                    GenerateCapctcha();
+                    GenerateCaptcha();
 
                     tbPassword.Clear();
 
@@ -115,7 +139,6 @@ namespace Practice2.Pages
                 }
                 else
                 {
-
                     txtBlockCaptcha.Text = CaptchaGenerator.GenerateCaptchaText(6);
                     txtboxCaptcha.Text = "";
                     MessageBox.Show("Пройдите капчу заново!");
@@ -164,36 +187,108 @@ namespace Practice2.Pages
             }
         }
 
-        private void LockTimer_Tick(object sender, EventArgs e)
+        private void txtLogin_TextChanged(object sender, TextChangedEventArgs e)
         {
-            lockTime--;
-            txtBlockTimer.Text = $"Повторите через {lockTime} секунд";
-
-            if (lockTime <= 0)
+            if (!string.IsNullOrWhiteSpace(txtLogin.Text))
             {
-                lockTimer.Stop();
-                btnEnter.IsEnabled = true;
-                btnEnterGuests.IsEnabled = true;
-                txtLogin.IsEnabled = true;
-                tbPassword.IsEnabled = true;
-                txtboxCaptcha.IsEnabled = true;
-
-                txtBlockTimer.Visibility = Visibility.Hidden;
-                click = 0;
-                lockTimer.Tick -= LockTimer_Tick;
+                btnLostPassword.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                btnLostPassword.Visibility = Visibility.Hidden;
             }
         }
-            private void LoadPage(Employee_registration user)
+        private void btnLostPassword_Click(object sender, RoutedEventArgs e)
         {
-            click = 0;
-            var clientPage = new Client(user);
-            NavigationService.Navigate(clientPage);
+            if (!string.IsNullOrWhiteSpace(txtLogin.Text))
+            {
+                tblEmail.Visibility = Visibility.Visible;
+                tbEmail.Visibility = Visibility.Visible;
+                btnSendCode.Visibility = Visibility.Visible;
+            }
         }
-
-        private bool IsWithinWorkingHours()
+        private void btnSendCode_Click(object sender, RoutedEventArgs e)
         {
-            int currentHour = DateTime.Now.Hour;
-            return currentHour >= 10 && currentHour < 20;
+            userEmail = tbEmail.Text.Trim();
+            if (string.IsNullOrWhiteSpace(userEmail))
+            {
+                MessageBox.Show("Введите адрес электронной почты.");
+                return;
+            }
+
+            generatedCode = CaptchaGenerator.GenerateCaptchaText(6);
+
+            try
+            {
+                SendEmail(userEmail, "Код восстановления пароля", $"Ваш код: {generatedCode}");
+                MessageBox.Show("Код отправлен на вашу почту.");
+
+                txtBlockCaptcha.Text = "Код:";
+                txtBlockCaptcha.Visibility = Visibility.Visible;
+                txtboxCaptcha.Visibility = Visibility.Visible;
+                btnCheckCode.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отправке кода: {ex.Message}");
+            }
+        }
+        private void btnCheckCode_Click(object sender, RoutedEventArgs e)
+        {
+            string enteredCode = txtboxCaptcha.Text.Trim();
+            if (enteredCode == generatedCode)
+            {
+                tblNewPassword.Visibility = Visibility.Visible;
+                tbNewPassword.Visibility = Visibility.Visible;
+                btnChangePassword.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MessageBox.Show("Неверный код. Попробуйте снова.");
+            }
+        }
+        private void btnChangePassword_Click(object sender, RoutedEventArgs e)
+        {
+            string newPassword = tbNewPassword.Text.Trim();
+            if (string.IsNullOrWhiteSpace(newPassword))
+            {
+                MessageBox.Show("Введите новый пароль.");
+                return;
+            }
+
+            using (var db = Helper.GetContext())
+            {
+                var user = db.Employee_registration.FirstOrDefault(x => x.Login == txtLogin.Text);
+                if (user != null)
+                {
+                    user.Password = Hash.HashHelper.HashPassword(newPassword);
+                    db.SaveChanges();
+                    MessageBox.Show("Пароль успешно изменен.");
+                }
+                else
+                {
+                    MessageBox.Show("Пользователь не найден.");
+                }
+            }
+        }
+        private void SendEmail(string to, string subject, string body)
+        {
+            using (SmtpClient smtpClient = new SmtpClient("smtp.mail.ru", 587))
+            {
+                smtpClient.Credentials = new NetworkCredential("csharp_test@internet.ru", "JTz7wkbyYkCy5YWU6K8z");
+                smtpClient.EnableSsl = true;
+
+                MailMessage mailMessage = new MailMessage
+                {
+                    From = new MailAddress("csharp_test@internet.ru"),
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = false
+                };
+                mailMessage.To.Add(to);
+
+                smtpClient.Send(mailMessage);
+            }
         }
     }
 }
