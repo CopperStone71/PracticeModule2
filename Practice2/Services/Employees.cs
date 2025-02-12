@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Practice2.Services
 {
+    ///<summary>
+    /// класс для работы с ListView
+    ///</summary>
     internal class Employees
     {
         public string Employee_code { get; set; }

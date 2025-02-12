@@ -145,6 +145,7 @@
     <Compile Include="Services\Employees.cs" />
     <Compile Include="Services\Hash.cs" />
     <Compile Include="Services\Helper.cs" />
+    <Compile Include="Services\WorkTeams.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

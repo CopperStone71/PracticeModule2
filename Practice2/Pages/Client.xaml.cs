@@ -23,6 +23,7 @@ namespace Practice2.Pages
     {
         private Employee_registration _getUser;
         private List<Employees> _employees;
+        private List<WorkTeams> _workTeams;
         private List<Employees> _filteredEmployees;
         private List<string> _jobTitles;
 
@@ -32,6 +33,7 @@ namespace Practice2.Pages
             _getUser = user;
             LoadPage();
             LoadEmployees();
+            LoadWorkTeams();
             LoadJobTitles();
         }
 
@@ -55,7 +57,7 @@ namespace Practice2.Pages
                 return "Приветствую!";
         }
 
-        private void LoadPage() 
+        private void LoadPage() // метод пишущий логин вошедшего пользователя
         {
             prog_comEntities db = Helper.GetContext();
             var user = db.Employee_registration.Where(x => x.Login == _getUser.Login);
@@ -69,7 +71,9 @@ namespace Practice2.Pages
                 txtFullName.Text = "Пользователь не найден.";
             }
         }
-
+        ///<summary>
+        /// метод загружающий в ListView данные о сотрудниках
+        ///</summary>
         private void LoadEmployees()
         {
             _employees = Helper.GetContext().Employee.Select(e => new Employees
@@ -89,6 +93,9 @@ namespace Practice2.Pages
             }
             EmployeesListView.ItemsSource = _employees;
         }
+        ///<summary>
+        /// метод загружающий должности из базы данных
+        ///</summary>
         private void LoadJobTitles()
         {
             _jobTitles = Helper.GetContext().Employee_type.Select(j => j.Type).Distinct().ToList();
@@ -106,6 +113,9 @@ namespace Practice2.Pages
         {
             FilterEmployees();
         }
+        ///<summary>
+        /// метод фильтрующий по должности
+        ///</summary>
         private void FilterEmployees()
         {
             string searchText = tbSearch.Text.ToLower();
@@ -119,8 +129,23 @@ namespace Practice2.Pages
             EmployeesListView.ItemsSource = null;
             EmployeesListView.ItemsSource = _filteredEmployees;
         }
-
-        private void EmployeesListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void LoadWorkTeams()
+        {
+                _workTeams = Helper.GetContext().Work_team.Select(e => new WorkTeams
+                {
+                    TeamName = e.Work_team_name,
+                    FirstName = e.Employee.First_name,
+                    SecondName = e.Employee.Second_name,
+                }).ToList();
+                foreach (var employee in _workTeams)
+                {
+                    employee.TeamName = $"{employee.TeamName}";
+                    employee.FullName = $"{employee.SecondName} {employee.FirstName}";
+                    employee.TeamPhoto = "P:\\Учёба\\Програмные модули(C#)\\Practice2\\Practice2\\Resources\\team_photo.jpg";
+                }
+                WorkTeamListView.ItemsSource = _workTeams;
+        }
+        private void EmployeesListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) // метод открывающий окно с изменением сотрудников на двойной клик по сотруднику
         {
             if (EmployeesListView.SelectedItem is Employees selectedEmployee)
             {
@@ -157,6 +182,42 @@ namespace Practice2.Pages
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             LoadEmployees();
+        }
+
+        private void PDFedButton_Click(object sender, RoutedEventArgs e)
+        {
+            FlowDocument doc = flowDocumentReader.Document;
+
+            if (doc == null)
+            {
+                MessageBox.Show("Документ не найден");
+                return;
+            }
+            PrintDialog printDialog = new PrintDialog();
+
+            if (printDialog.ShowDialog() == true)
+            {
+                IDocumentPaginatorSource idpSource = doc;
+                printDialog.PrintDocument(idpSource.DocumentPaginator, "Список команд");
+            }
+        }
+
+        private void PDFedEmpButton_Click(object sender, RoutedEventArgs e)
+        {
+            FlowDocument doc = flowDocumentEmpReader.Document;
+
+            if (doc == null)
+            {
+                MessageBox.Show("Документ не найден");
+                return;
+            }
+            PrintDialog printDialog = new PrintDialog();
+
+            if (printDialog.ShowDialog() == true)
+            {
+                IDocumentPaginatorSource idpSource = doc;
+                printDialog.PrintDocument(idpSource.DocumentPaginator, "Список сотрудников");
+            }
         }
     }
 }

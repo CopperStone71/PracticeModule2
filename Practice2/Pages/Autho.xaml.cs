@@ -12,6 +12,9 @@ using System.Net;
 
 namespace Practice2.Pages
 {
+    ///<summary>
+    /// Стартовое окно с авторизацией пользователя
+    ///</summary>
     public partial class Autho : Page
     {
         int click;
@@ -29,7 +32,7 @@ namespace Practice2.Pages
             lockTimer.Interval = TimeSpan.FromSeconds(1);
         }
 
-        private void GenerateCaptcha()
+        private void GenerateCaptcha() // метод генерирующий Капчу 
         {
             txtboxCaptcha.Visibility = Visibility.Visible;
             txtBlockCaptcha.Visibility = Visibility.Visible;
@@ -39,7 +42,7 @@ namespace Practice2.Pages
             txtBlockCaptcha.TextDecorations = TextDecorations.Strikethrough;
         }
 
-        private void LockTimer_Tick(object sender, EventArgs e)
+        private void LockTimer_Tick(object sender, EventArgs e) // метод блокировки ввода на определенное время
         {
             lockTime--;
             txtBlockTimer.Text = $"Повторите через {lockTime} секунд";
@@ -86,7 +89,11 @@ namespace Practice2.Pages
 
             prog_comEntities db = Helper.GetContext();
 
-            var user = db.Employee_registration.Where(x => x.Login == login && x.Password == hashPassw).FirstOrDefault();
+            var user = db.Employee_registration.Where(x => x.Login == login && x.Password == hashPassw).FirstOrDefault(); //проверка соответствия логина и пароля существующим в базе данных
+            /*
+            При одном неправильном вводе генерирует капчу,
+            При более трех неправильных вводах блокирует ввод на 30 секунд
+            */
             if (click == 1)
             {
                 if (user != null)
@@ -113,7 +120,7 @@ namespace Practice2.Pages
                     txtBlockCaptcha.Text = CaptchaGenerator.GenerateCaptchaText(6);
                 }
             }
-            else if (click > 1 && click < 3)
+            else if (click > 1 && click < 3) 
             {
                 if (user != null && txtboxCaptcha.Text == txtBlockCaptcha.Text)
                 {
@@ -207,7 +214,7 @@ namespace Practice2.Pages
                 btnSendCode.Visibility = Visibility.Visible;
             }
         }
-        private void btnSendCode_Click(object sender, RoutedEventArgs e)
+        private void btnSendCode_Click(object sender, RoutedEventArgs e) // метод отправки сгенерированного пароля на написанный адрес электронной почты
         {
             userEmail = tbEmail.Text.Trim();
             if (string.IsNullOrWhiteSpace(userEmail))
@@ -247,7 +254,7 @@ namespace Practice2.Pages
                 MessageBox.Show("Неверный код. Попробуйте снова.");
             }
         }
-        private void btnChangePassword_Click(object sender, RoutedEventArgs e)
+        private void btnChangePassword_Click(object sender, RoutedEventArgs e) // метод смены пароля пользователя
         {
             string newPassword = tbNewPassword.Text.Trim();
             if (string.IsNullOrWhiteSpace(newPassword))
@@ -271,6 +278,12 @@ namespace Practice2.Pages
                 }
             }
         }
+        ///<summary>
+        /// метод отправки сообщения на электронную почту
+        ///</summary>
+        ///<param name="to">Объект хранящий значение адреса электронной почты пользователя</param>
+        ///<param name="subject">Объект хранящий текст темы электронного письма</param>
+        ///<param name="body">Объект хранящий текст письма</param>
         private void SendEmail(string to, string subject, string body)
         {
             using (SmtpClient smtpClient = new SmtpClient("smtp.mail.ru", 587))

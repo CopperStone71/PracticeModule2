@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Practice2.Services
 {
-    internal class Helper
+    internal class Helper // класс для вызова контекста приклреплённой базы данных
     {
         private static prog_comEntities _context;
         public static prog_comEntities GetContext()

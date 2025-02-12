@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Practice2.Services
 {
+    ///<summary>
+    /// класс генерирующий Капчу
+    ///</summary>
     internal class CaptchaGenerator
     {
         private static readonly Random random = new Random();

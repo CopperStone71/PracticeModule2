@@ -13,7 +13,7 @@ namespace Practice2.Model
         // Этот класс оставляем пустым, так как он используется только для связи с метаданными.
     }
 
-    public class EmployeeMetadata
+    public class EmployeeMetadata // класс для валидации данных
     {
         [Required(ErrorMessage = "Имя обязательно для заполнения.")]
         [StringLength(10, ErrorMessage = "Имя не должно превышать 10 символов.")]

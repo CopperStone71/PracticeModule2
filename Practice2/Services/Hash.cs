@@ -9,6 +9,9 @@ namespace Practice2.Services
 {
     internal class Hash
     {
+        ///<summary>
+        ///  класс для хеширования пароля
+        ///</summary>
         public static class HashHelper
         {
             public static string HashPassword(string password)

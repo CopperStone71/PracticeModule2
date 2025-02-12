@@ -5,11 +5,12 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Practice2.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="800" d:DesignWidth="800"
       Title="Client">
 
     <Grid>
-        
+
+        <!-- Блок с именем пользователя -->
         <Label Content="Client" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF00C013" FontSize="14"/>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Right">
             <TextBlock Text="Пользователь"/>
@@ -18,39 +19,88 @@
 
 
         <StackPanel Orientation="Vertical">
+            <!-- Блок с фильтром по должности -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock Text="Фильтр по должности" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <ComboBox Name="cbJobTitle" Width="200" Margin="10" SelectionChanged="cbJobTitle_SelectionChanged" Height="35" SelectedIndex="0"/>
             </StackPanel>
+            <!-- Болк с поиском по ФИО -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock Text="Поиск по ФИО" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBox Name="tbSearch" Width="200" Margin="10"  TextChanged="tbSearch_TextChanged" Height="30" FontSize="12"/>
             </StackPanel>
-            <ListView Name="EmployeesListView" Grid.Column="0" VerticalAlignment="Center" Margin="5, 0, 5, 0" MouseDoubleClick="EmployeesListView_MouseDoubleClick" d:ItemsSource="{d:SampleData ItemCount=1}">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="10" Padding="10" BorderThickness="1" CornerRadius="5" BorderBrush="Gray">
-                            <StackPanel x:Name="spEmployeeCard" Width="150">
-                                <Image Source="{Binding PhotoUrl}" Width="100" Height="100" Stretch="UniformToFill" Margin="0, 0, 0, 10"/>
-                                <TextBlock Text="{Binding FullName}" HorizontalAlignment="Center" FontWeight="Bold" Margin="0, 0, 0, 5"/>
-                                <TextBlock Text="{Binding Employee_type_code}" HorizontalAlignment="Center" Margin="0, 0, 0, 5"/>
-                                <TextBlock Text="{Binding Mobile_number}" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Button Margin="5,15,5,15" Content="Добавить сотрудника" Click="AddEmployeeButton_Click" Width="160"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <!-- Кнопка с печатью списком команд -->
+                <Button Margin="5,5,5,5" Content="Распечатать список команд" Click="PDFedButton_Click" Width="200"/>
+                <!-- Кнопка с добавлением сотрудника -->
+                <Button Margin="5,15,5,15" Content="Добавить сотрудника" Click="AddEmployeeButton_Click" Width="160"/>
+                <!-- Кнопка с печатью списка сотрудников -->
+                <Button Margin="5,5,5,5" Content="Распечатать список сотрудников" Click="PDFedEmpButton_Click" Width="240"/>
+            </StackPanel>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <FlowDocumentReader x:Name="flowDocumentEmpReader" Grid.Row="0" >
+                    <FlowDocument PageWidth="Auto" ColumnWidth="1000">
+                        <BlockUIContainer>
+                            <!-- ListView с данными о работниках -->
+                            <ListView Name="EmployeesListView" Grid.Column="0" VerticalAlignment="Center" Margin="5, 0, 5, 5" MouseDoubleClick="EmployeesListView_MouseDoubleClick" d:ItemsSource="{d:SampleData ItemCount=1}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <!-- Контейнер ListView с данными о сотрудниках -->
+                                    <DataTemplate>
+                                        <Border Margin="10" Padding="10" BorderThickness="1" CornerRadius="5" BorderBrush="Gray">
+                                            <StackPanel x:Name="spEmployeeCard" Width="150">
+                                                <Image Source="{Binding PhotoUrl}" Width="100" Height="100" Stretch="UniformToFill" Margin="0, 0, 0, 10"/>
+                                                <TextBlock Text="{Binding FullName}" HorizontalAlignment="Center" FontWeight="Bold" Margin="0, 0, 0, 5"/>
+                                                <TextBlock Text="{Binding Employee_type_code}" HorizontalAlignment="Center" Margin="0, 0, 0, 5"/>
+                                                <TextBlock Text="{Binding Mobile_number}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </BlockUIContainer>
+                    </FlowDocument>
+                </FlowDocumentReader>
+
+                <FlowDocumentReader x:Name="flowDocumentReader" Grid.Row="1">
+                    <FlowDocument PageWidth="Auto" ColumnWidth="1000">
+                        <BlockUIContainer>
+                            <!-- ListView с данными о командах разработки -->
+                            <ListView Name="WorkTeamListView" Grid.Column="0" VerticalAlignment="Center" Margin="5, 5, 5, 0" d:ItemsSource="{d:SampleData ItemCount=1}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <!-- Контейнер ListView с данными о команде разработки -->
+                                    <DataTemplate>
+                                        <Border Margin="10" Padding="10" BorderThickness="1" CornerRadius="5" BorderBrush="Gray">
+                                            <StackPanel x:Name="spWorkTeamCard" Width="150">
+                                                <Image Source="{Binding TeamPhoto}" Width="100" Height="100" Stretch="UniformToFill" Margin="0, 0, 0, 10"/>
+                                                <TextBlock Text="{Binding TeamName}" HorizontalAlignment="Center" FontWeight="Bold" Margin="0, 0, 0, 5"/>
+                                                <TextBlock Text="{Binding FullName}" HorizontalAlignment="Center" Margin="0, 0, 0, 5"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </BlockUIContainer>
+                    </FlowDocument>
+                </FlowDocumentReader>
+            </Grid>
         </StackPanel>
     </Grid>
 </Page>

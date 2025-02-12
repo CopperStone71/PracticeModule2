@@ -76,9 +76,9 @@ namespace Practice2.Pages
                     Mobile_number = tbPhoneNumber.Text
                 };
 
+                // проверка валидации данных
                 var validationContext = new ValidationContext(newEmployee);
                 var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
-
                 StringBuilder sb = new StringBuilder();
                 if (!Validator.TryValidateObject(newEmployee, validationContext, validationResults, true))
                 {
@@ -98,6 +98,7 @@ namespace Practice2.Pages
                     return;
                 }*/
 
+                // запись в базу данных нового пользователя
                 using (var context = Helper.GetContext())
                 {
                     context.Database.Log = Console.WriteLine;

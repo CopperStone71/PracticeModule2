@@ -15,21 +15,25 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-
         <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top">
+
+            <!-- Блок с вводом логина, пароля и капчи -->
             <TextBlock Text="Логин:"/>
             <TextBox x:Name="txtLogin"/>
             <TextBlock Text="Пароль:"/>
             <TextBox x:Name="tbPassword"/>
             <TextBlock  x:Name="txtBlockCaptcha" Text="Капча:" Visibility="Hidden"/>
             <TextBox  x:Name="txtboxCaptcha" Visibility="Hidden"/>
-
             <TextBlock Visibility="Hidden" x:Name="txtBlockTimer" Text="" Foreground="Red"/>
+
+            <!-- Блок кнопок входа -->
             <StackPanel Orientation="Horizontal" Height="55" HorizontalAlignment="Center" >
                 <Button x:Name="btnEnterGuests" Content="Войти как гость" Click="btnEnterGuests_Click"/>
                 <Button x:Name="btnEnter" Content="Войти" Click="btnEnter_Click"/>
                 <Button x:Name="btnLostPassword" Content="Забыли пароль" Click="btnLostPassword_Click"/>
             </StackPanel>
+
+            <!-- Блок для замены пароля -->
             <TextBlock  x:Name="tblEmail" Text="Введите почту:" Visibility="Hidden"/>
             <TextBox  x:Name="tbEmail" Visibility="Hidden"/>
             <StackPanel Orientation="Horizontal" Height="55" HorizontalAlignment="Center" >

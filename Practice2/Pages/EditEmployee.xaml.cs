@@ -51,7 +51,7 @@ namespace Practice2.Pages
         {
             StringBuilder errorMessages = new StringBuilder();
 
-            /*if (string.IsNullOrWhiteSpace(tbFirstName.Text))
+            if (string.IsNullOrWhiteSpace(tbFirstName.Text))
             {
                 errorMessages.AppendLine("Поле \"Имя\" обязательно для заполнения.");
             }
@@ -84,7 +84,7 @@ namespace Practice2.Pages
             {
                 MessageBox.Show("Заполните обязательные поля", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
-            }*/
+            }
 
             try
             {
@@ -99,9 +99,9 @@ namespace Practice2.Pages
                         existingEmployee.Patronymic = tbMiddleName.Text;
                         existingEmployee.Mobile_number = tbPhoneNumber.Text;
 
+                        // проверка валидации данных
                         var validationContext = new ValidationContext(existingEmployee, null, null);
                         var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
-
                         StringBuilder sb = new StringBuilder();
                         if (!Validator.TryValidateObject(existingEmployee, validationContext, validationResults, true))
                         {
@@ -136,7 +136,7 @@ namespace Practice2.Pages
             }
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteButton_Click(object sender, RoutedEventArgs e) // метод удаляющий сотрудника из базы данных
         {
             MessageBoxResult result = MessageBox.Show("Вы уверены, что хотите удалить этого сотрудника?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
